@@ -2,7 +2,7 @@
 #include <stdint.h>
 
 #include "./geometry2D.h"
-#include "./geometry1D.h"
+#include "./geometry_types.h"
 
 
 // FUNCTIONS FOR OPERATING 2D VECTORS

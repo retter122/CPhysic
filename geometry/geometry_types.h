@@ -5,7 +5,7 @@
 
 // SCALAR TYPES
 
-typedef f32_t float;
+typedef float f32_t;
 
 
 // PRIMITIVES TYPE

@@ -17,27 +17,32 @@ typedef struct {
     uint32_t edges_num;
 
     f32_t *edges_len, *vertex_mass_coof, *vertex_spd;
-} pobj2_32t;
+} pobj32_2t;
+
+
+typedef void (*force32_2t)(pobj32_2t* object, scene32_2t* scene, f32_t time);
 
 
 typedef struct {
-    pobj2_32t *objects;
-    uint32_t objects_num;    
+    pobj32_2t *objects;
+    uint32_t objects_num;
 
-} scene2_32t;
+    force32_2t* forces;
+
+} scene32_2t;
 
 
 // 2D SCENE PROCEDURES
 
-scene2_32t* scene2_32t_create();
+scene32_2t* scene2_32t_create();
 
-void scene2_32t_new(scene2_32t* scene, const figure32_2t* figure);
+void scene32_2t_new(scene32_2t* scene, const figure32_2t* figure);
 
-void scene2_32t_update
+void scene32_2t_update(scene32_2t* scene);
 
 
 // 2D OBJECT PROCEDURES
 
-void pobj2_32t_update_pos(pobj2_32t* obj);
+void pobj32_2t_update_pos(pobj32_2t* obj);
 
-void pobj2_32t_add_pulse(pobj2_32t* obj, const f32_2t* pulse);
+void pobj32_2t_add_pulse(pobj32_2t* obj, const f32_2t* pulse);
