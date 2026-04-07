@@ -16,4 +16,5 @@ typedef struct {
 
 typedef struct {
     uint32_t a, b;
+    f32_t len;
 } edge;
