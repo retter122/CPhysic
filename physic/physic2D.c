@@ -92,26 +92,7 @@ void scene32_2t_new_obj(scene32_2t* scene, const figure32_2t* figure, f32_t mass
 }
 
 
-void scene32_2t_add_obj(scene32_2t* scene, const pobj32_2t* object) {
-    scene->objects = realloc(scene->objects, (scene->objects_num + 1) * sizeof(pobj32_2t));
-    
-    scene->objects[scene->objects_num].mass = object->mass, scene->objects[scene->objects_num].hardness = object->hardness;
-    scene->objects[scene->objects_num].figure = figure32_2t_copy(object->figure);
-
-    scene->objects[scene->objects_num].edges = malloc(object->edges_num * sizeof(edge));
-    for (uint32_t i = 0; i < scene->objects_num; ++i) scene->objects[scene->objects_num].edges[i] = object->edges[i];
-    scene->objects[scene->objects_num].edges_num = object->edges_num;
-
-    scene->objects[scene->objects_num].vertex_spd = malloc(object->figure->vertex_num * sizeof(f32_2t));
-    scene->objects[scene->objects_num].vertex_mass_coof = malloc(object->figure->vertex_num * sizeof(f32_t));
-    for (uint32_t i = 0; i < object->figure->vertex_num; ++i) {
-        scene->objects[scene->objects_num].vertex_mass_coof[i] = object->vertex_mass_coof[i];
-        scene->objects[scene->objects_num].vertex_spd[i] = object->vertex_spd[i];
-    }
-}
-
-
-void scene32_2t_add_force(scene32_2t* scene, force32_2t* force) {
+void scene32_2t_add_force(scene32_2t* scene, force32_2t force) {
     scene->forces = realloc(scene->forces, scene->forces_num * sizeof(force32_2t));
     scene->forces[scene->forces_num++] = force;
 }
@@ -149,5 +130,5 @@ void scene32_2t_update(scene32_2t* scene, f32_t time) {
 // 2D OBJECT PROCEDURES
 
 void pobj32_2t_add_pulse(pobj32_2t* obj, const f32_2t* pulse) {
-    for (uint32_t i = 0; i < obj->figure->vertex_num; ++i) f32_2t_smad(&obj->vertex_spd[i], pulse, obj->vertex_mass_coof[i]);
+    for (uint32_t i = 0; i < obj->figure->vertex_num; ++i) f32_2t_smad(&obj->vertex_spd[i], pulse, 1.f / obj->mass);
 }
