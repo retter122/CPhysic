@@ -1,1 +1,10 @@
-gcc "./main.c" "./geometry/geometry2D.c" "./geometry/geometry4D.c" "./physic/physic2D.c" -o "./build/CPhysic.out" -lm
+echo "Compile CPhysic"
+
+cd "./CPhysic"
+bash "./compile.sh"
+cd "../"
+mv "./CPhysic/cphysic.a" "./bin"
+
+echo "Compile main.c"
+
+gcc "./main.c" "bin/libglfw3.a" "bin/cphysic.a" -o "./build/CPhysic.out"  -lm
