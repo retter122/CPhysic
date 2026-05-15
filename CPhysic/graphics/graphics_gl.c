@@ -18,11 +18,7 @@ uint8_t init_gl() {
 }
 
 window_gl *window_gl_create(uint32_t width, uint32_t height, const char *name) {
-    glfwWindowHint(GLFW_CONTEXT_WINDOW_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_WINDOW_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    GLFWwindow *out = glfwCreateWindow(width, height, name);
+    GLFWwindow *out = glfwCreateWindow(width, height, name, 0, 0);
     
     glfwMakeContextCurrent(out);
     gladLoadGL(glfwGetProcAddress);
@@ -43,7 +39,7 @@ void window_gl_get_size(window_gl *wnd, uint32_t *width, uint32_t *height) {
     glfwGetFramebufferSize(wnd, width, height);
 }
 
-void window_gl_should_close(window_gl *wnd) {
+bool window_gl_should_close(window_gl *wnd) {
     return glfwWindowShouldClose(wnd);
 }
 

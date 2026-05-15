@@ -5,53 +5,21 @@
 #include "./CPhysic/cphysic.h"
 
 
-// WINDOW DATA
+static window_gl *PWindow = 0;
 
-static GLFWwindow *glfw_wnd = 0;
-static uint32_t wnd_width = 300, wnd_height = 300;
-
-
-// WINDOW CALLBACKS
-
-void wnd_resize(GLFWwindow *wnd, int width, int height) {
-    wnd_width = (uint32_t)width, wnd_height = (uint32_t)height;
-    glViewport(0, 0, wnd_width, wnd_height);
-}
-
-
-// MAIN FUNCTION
 
 int main() {
-    // INIT OPEN GL
+    init_gl();
 
-    if (!glfwInit()) return 1;
+    PWindow = window_gl_create(800, 800, "test");
+    window_gl_clear_color(PWindow, 0.3, 0.6, 0.3, 0.4);
 
-    glfwWindowHint(GLFW_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_VERSION_MINOR, 3);
+    while (1) {
+        if (window_gl_should_close(PWindow)) break;
+        window_gl_clear(PWindow);
 
-    // CREATE WINDOW
 
-    glfw_wnd = glfwCreateWindow(wnd_width, wnd_height, "test", 0, 0);
-    
-    glfwMakeContextCurrent(glfw_wnd);
-    gladLoadGL(glfwGetProcAddress);
-
-    glClearColor(0, 0, 0, 1.f);
-    glViewport(0, 0, wnd_width, wnd_height);
-
-    // INITIALIZE EVENTS
-
-    glfwSetFramebufferSizeCallback(glfw_wnd, wnd_resize);
-
-    // MAIN CYCLE
-
-    while (!glfwWindowShouldClose(glfw_wnd)) {
-        glfwPollEvents();
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glfwSwapBuffers(glfw_wnd);
     }
 
-    glfwTerminate();
     return 0;
 }

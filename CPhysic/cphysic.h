@@ -1,6 +1,5 @@
 #pragma once
 
-#define GLAD_GL_IMPLEMENTATION
 #define GLFW_INCLUDE_NONE
 
 #include "./geometry/geometry.h"
