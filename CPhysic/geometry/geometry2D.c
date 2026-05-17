@@ -70,6 +70,9 @@ figure32_2t* figure32_2t_copy(const figure32_2t* src) {
     out->vertex = malloc(sizeof(f32_2t) * src->vertex_num), out->vertex_num = src->vertex_num;
     for (uint32_t i = 0; i < src->vertex_num; ++i) out->vertex[i].x = src->vertex[i].x, out->vertex[i].y = src->vertex[i].y;
 
+    out->colors = malloc(sizeof(color) * src->vertex_num);
+    for (uint32_t i = 0; i < src->vertex_num; ++i) out->colors[i].r = src->colors[i].r, out->colors[i].g = src->colors[i].g, out->colors[i].b = src->colors[i].b;
+
     out->faces = malloc(sizeof(face) * src->faces_num); out->faces_num = src->faces_num;
     for (uint32_t i = 0; i < src->faces_num; ++i) out->faces[i].a = src->faces[i].a, out->faces[i].b = src->faces[i].b, out->faces[i].c = src->faces[i].c;
 

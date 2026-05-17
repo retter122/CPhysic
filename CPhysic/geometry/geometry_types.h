@@ -18,3 +18,10 @@ typedef struct {
     uint32_t a, b;
     f32_t len;
 } edge;
+
+
+// GRAPHICS TYPES
+
+typedef struct {
+    f32_t r, g, b;
+} color;

@@ -1,8 +1,17 @@
 #pragma once
 
+#define GLFW_INCLUDE_NONE
+
 #include <stdint.h>
 
+#include "./graphics_math.h"
+
 #include "../GLFW/glfw3.h"
+
+#ifndef GLAD_GL_H_
+#include "../glad/gl.h"
+#endif
+
 #include "../geometry/geometry.h"
 #include "../physic/physic.h"
 
@@ -10,6 +19,29 @@
 // OPENGL WINDOW STRUCTURE
 
 typedef GLFWwindow window_gl;
+
+
+// OPENGL SHADERS STRUCTURE
+
+typedef struct {
+    char *vertex, *geometry, *fragment;
+} source_gl;
+
+typedef struct {
+    GLuint vertex, geometry, fragment;
+    GLint transform_location;
+    GLuint program;
+} pipeline_gl; 
+
+
+// OPENGL DRAW STRUCTURE
+
+typedef struct {
+    GLuint vertex_buf, color_buf, index_buf;
+    GLuint vertex_arr;
+
+    uint32_t points;
+} draw_gl;
 
 
 // FUNCTIONS FOR WORK WITH OPENGL
@@ -26,17 +58,49 @@ void window_gl_get_size(window_gl *wnd, uint32_t *width, uint32_t *height);
 
 bool window_gl_should_close(window_gl *wnd);
 
+void window_gl_poll_events(window_gl *wnd);
 
 // FUNCTIONS FOR WORK WITH GRAPHIC
-
-void window_gl_set_mode();
 
 void window_gl_clear_color(window_gl *window, float r, float g, float b, float a);
 
 void window_gl_clear(window_gl *window);
 
-void window_gl_draw_figure32_2t(window_gl *window, figure32_2t *figure);
+void window_gl_draw(window_gl *window, const pipeline_gl* pipeline, const draw_gl *figure, const f32_4x4t* transform);
 
-void window_gl_draw_pobj32_2t(window_gl *window, pobj32_2t *object);
 
-void window_gl_draw_scene32_2t(window_gl *window, scene32_2t *scene);
+// FUNCTIONS FOR DRAW
+
+draw_gl *draw_gl_init_figure32_2t(const figure32_2t *figure);
+draw_gl *draw_gl_update_figure32_2t(const figure32_2t *figure);
+
+
+// FUNCTIONS FOR WORK WITH SHADERS
+
+pipeline_gl *pipeline_gl_compile(const source_gl *source);
+
+
+// DEFAULT SHADERS
+
+static source_gl source_gl_lightless_2d = {
+    .vertex = 
+    "#version 330\n"
+    "layout (location = 0) in vec2 VPos;\n"
+    "layout (location = 1) in vec3 VCol;\n"
+    "uniform mat4 VTrans;\n"
+    "out vec3 FColor;\n"
+    "void main() {\n"
+    "   gl_Position = VTrans * vec4(VPos, 0.f, 1.f);\n"
+    "   FColor = VCol;\n"
+    "}",
+
+    .geometry = 0,
+
+    .fragment = 
+    "#version 330\n"
+    "in vec3 FColor;\n"
+    "out vec4 fragment;\n"
+    "void main() {\n"
+    "   fragment = vec4(FColor, 1.f);\n"
+    "}"
+};
