@@ -38,6 +38,4 @@ f32_t f32_2t_dot(const f32_2t *src1, const f32_2t *src2);
 
 // FUNCTIONS FOR OPERATING 2D FIGURES
 
-void figure32_2t_prepare(figure32_2t* dst, const color* vert_color);
-
 figure32_2t* figure32_2t_copy(const figure32_2t* src);

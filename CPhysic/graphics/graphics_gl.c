@@ -91,22 +91,44 @@ draw_gl *draw_gl_init_figure32_2t(const figure32_2t* figure) {
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ARRAY_BUFFER, out->vertex_buf);
-    glBufferData(GL_ARRAY_BUFFER, figure->vertex_num * sizeof(f32_2t), figure->vertex, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, figure->vertex_num * sizeof(f32_2t), figure->vertex, GL_STREAM_DRAW);
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(f32_2t), (void*)0);
     glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, out->color_buf);
-    glBufferData(GL_ARRAY_BUFFER, figure->vertex_num * sizeof(color), figure->colors, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, figure->vertex_num * sizeof(color), figure->colors, GL_STREAM_DRAW);
 
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(color), (void*)0);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, out->index_buf);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, figure->faces_num * sizeof(face), figure->faces, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, figure->faces_num * sizeof(face), figure->faces, GL_STREAM_DRAW);
 
     out->points = figure->faces_num * 3;
 
     return out;
+}
+
+
+void draw_gl_update_figure32_2t(draw_gl *dst, const figure32_2t *figure) {
+    glBindBuffer(GL_ARRAY_BUFFER, dst->vertex_buf);
+    glBufferData(GL_ARRAY_BUFFER, figure->vertex_num * sizeof(f32_2t), figure->vertex, GL_STREAM_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, dst->color_buf);
+    glBufferData(GL_ARRAY_BUFFER, figure->vertex_num * sizeof(color), figure->colors, GL_STREAM_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dst->index_buf);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, figure->faces_num * sizeof(face), figure->faces, GL_STREAM_DRAW);
+}
+
+
+draw_gl* draw_gl_init_pobj32_2t(const pobj32_2t *obj) {
+    return draw_gl_init_figure32_2t(obj->figure);
+}
+
+
+void draw_gl_update_pobj32_2t(draw_gl *dst, const pobj32_2t *obj) {
+    draw_gl_update_figure32_2t(dst, obj->figure);
 }
 
 

@@ -60,6 +60,7 @@ bool window_gl_should_close(window_gl *wnd);
 
 void window_gl_poll_events(window_gl *wnd);
 
+
 // FUNCTIONS FOR WORK WITH GRAPHIC
 
 void window_gl_clear_color(window_gl *window, float r, float g, float b, float a);
@@ -72,7 +73,22 @@ void window_gl_draw(window_gl *window, const pipeline_gl* pipeline, const draw_g
 // FUNCTIONS FOR DRAW
 
 draw_gl *draw_gl_init_figure32_2t(const figure32_2t *figure);
-draw_gl *draw_gl_update_figure32_2t(const figure32_2t *figure);
+void draw_gl_update_figure32_2t(draw_gl *dst, const figure32_2t *figure);
+
+draw_gl *draw_gl_init_pobj32_2t(const pobj32_2t *pobj);
+void draw_gl_update_pobj32_2t(draw_gl *dst, const pobj32_2t *pobj);
+
+draw_gl *draw_gl_init_scene32_2t(const scene32_2t *scene);
+void draw_gl_update_scene32_2t(draw_gl *dst, const scene32_2t *scene);
+
+draw_gl *draw_gl_init_figure32_4t(const figure32_4t *figure);
+void draw_gl_update_figure32_4t(draw_gl *dst, const figure32_4t *figure);
+
+draw_gl *draw_gl_init_pobj32_4t(const pobj32_4t *pobj);
+void draw_gl_update_pobj32_4t(draw_gl *dst, const pobj32_4t *pobj);
+
+draw_gl *draw_gl_init_scene32_4t(const scene32_4t *scene);
+void draw_gl_update_scene32_4t(draw_gl *dst, const scene32_4t *scene);
 
 
 // FUNCTIONS FOR WORK WITH SHADERS
@@ -102,5 +118,28 @@ static source_gl source_gl_lightless_2d = {
     "out vec4 fragment;\n"
     "void main() {\n"
     "   fragment = vec4(FColor, 1.f);\n"
+    "}"
+};
+
+static source_gl source_gl_lightless_3d = {
+    .vertex =
+    "#version 330\n"
+    "layout (location = 0) in vec3 VPos;\n"
+    "layout (location = 1) in vec3 VCol;\n"
+    "uniform mat4 VTrans;\n"
+    "out vec3 FColor;\n"
+    "void main() {\n"
+    "   gl_Position = VTrans * vec4(VPos, 1.f);\n"
+    "   FColor = VCol;\n"
+    "}",
+
+    .geometry = 0,
+
+    .fragment =
+    "#version 330\n"
+    "in vec3 FColor;\n"
+    "out vec4 fragment;\n"
+    "void main() {\n"
+    "   fragment = vec4(FColor, 1.f)'\n"
     "}"
 };
