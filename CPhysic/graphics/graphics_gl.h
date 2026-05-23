@@ -74,21 +74,27 @@ void window_gl_draw(window_gl *window, const pipeline_gl* pipeline, const draw_g
 
 draw_gl *draw_gl_init_figure32_2t(const figure32_2t *figure);
 void draw_gl_update_figure32_2t(draw_gl *dst, const figure32_2t *figure);
+void draw_gl_realloc_figure32_2t(draw_gl *dst, const figure32_2t *figure);
 
 draw_gl *draw_gl_init_pobj32_2t(const pobj32_2t *pobj);
 void draw_gl_update_pobj32_2t(draw_gl *dst, const pobj32_2t *pobj);
+void draw_gl_realloc_pobj32_2t(draw_gl *dst, const pobj32_2t *pobj);
 
 draw_gl *draw_gl_init_scene32_2t(const scene32_2t *scene);
 void draw_gl_update_scene32_2t(draw_gl *dst, const scene32_2t *scene);
+void draw_gl_realloc_scene32_2t(draw_gl *dst, const scene32_2t *scene);
 
 draw_gl *draw_gl_init_figure32_4t(const figure32_4t *figure);
 void draw_gl_update_figure32_4t(draw_gl *dst, const figure32_4t *figure);
+void draw_gl_realloc_figure32_4t(draw_gl *dst, const figure32_4t *figure);
 
 draw_gl *draw_gl_init_pobj32_4t(const pobj32_4t *pobj);
 void draw_gl_update_pobj32_4t(draw_gl *dst, const pobj32_4t *pobj);
+void draw_gl_realloc_pobj32_4t(draw_gl *dst, const pobj32_4t *pobj);
 
 draw_gl *draw_gl_init_scene32_4t(const scene32_4t *scene);
 void draw_gl_update_scene32_4t(draw_gl *dst, const scene32_4t *scene);
+void draw_gl_realloc_scene32_4t(draw_gl *dst, const scene32_4t *scene);
 
 
 // FUNCTIONS FOR WORK WITH SHADERS

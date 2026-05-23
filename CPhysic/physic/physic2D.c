@@ -43,28 +43,7 @@ void scene32_2t_add_force(scene32_2t* scene, force32_2t force) {
 void scene32_2t_update(scene32_2t* scene, f32_t time) {
     for (uint32_t i = 0; i < scene->forces_num; ++i) scene->forces[i](scene, time);
 
-    for (uint32_t i = 0; i < scene->objects_num; ++i) {
-        pobj32_2t* obj = scene->objects + i;
-
-        for (uint32_t j = 0; j < scene->objects[i].edges_num; ++j) {
-            edge32_t* edge = scene->objects[i].edges + j;
-
-            f32_2t force = { obj->figure->vertex[edge->b].x, obj->figure->vertex[edge->b].y };
-            f32_2t_sub(&force, &obj->figure->vertex[edge->a]);
-
-            f32_t len_edge = sqrtf(f32_2t_dot(&force, &force));
-            f32_2t_smul(&force, (len_edge - edge->len) / len_edge * obj->hardness * time);
-            
-            f32_2t_smad(&obj->vertex_spd[edge->a], &force, 1.f / obj->vertex_mass_coof[edge->a]);
-            f32_2t_smad(&obj->vertex_spd[edge->b], &force, -1.f / obj->vertex_mass_coof[edge->b]);
-        }
-    }
-
-    for (uint32_t i = 0; i < scene->objects_num; ++i) {
-        for (uint32_t j = 0; j < scene->objects->figure->vertex_num; ++j) {
-            f32_2t_smad(&scene->objects[i].figure->vertex[j], &scene->objects[i].vertex_spd[j], time);
-        }
-    }
+    for (uint32_t i = 0; i < scene->objects_num; ++i) pobj32_2t_update(&scene->objects[i], time);
 }
 
 
@@ -104,8 +83,8 @@ void pobj32_2t_update(pobj32_2t* obj, f32_t time) {
         f32_t len = sqrtf(f32_2t_dot(&force, &force));
         f32_2t_smul(&force, (len - now_edge->len) / len * obj->hardness);
 
-        f32_2t_smad(&obj->vertex_spd[now_edge->a], &force, time / obj->vertex_mass_coof[now_edge->a]);
-        f32_2t_smad(&obj->vertex_spd[now_edge->b], &force, -time / obj->vertex_mass_coof[now_edge->b]);
+        f32_2t_smad(&obj->vertex_spd[now_edge->a], &force, time / (obj->vertex_mass_coof[now_edge->a] / obj->mass));
+        f32_2t_smad(&obj->vertex_spd[now_edge->b], &force, -time / (obj->vertex_mass_coof[now_edge->b] / obj->mass));
     }
 
     for (uint32_t i = 0; i < obj->figure->vertex_num; ++i) f32_2t_smad(&obj->figure->vertex[i], &obj->vertex_spd[i], time);

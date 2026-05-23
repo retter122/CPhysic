@@ -13,7 +13,7 @@ typedef void (*force32_2t)(scene32_2t* scene, f32_t time);
 
 
 typedef struct {
-    figure32_2t* figure;
+    figure32_2t *figure;
 
     f32_t mass, hardness, damping;
 
@@ -56,3 +56,8 @@ void pobj32_2t_update(pobj32_2t *obj, f32_t time);
 void pobj32_2t_generate_edges(pobj32_2t *object);
 
 void pobj32_2t_init_mass_coofs(pobj32_2t *object);
+
+
+// BASIC FORCES FUNCTIONS
+
+void forces32_2t_gravity(scene32_2t *scene, f32_t time);
