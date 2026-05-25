@@ -36,6 +36,12 @@ void f32_2t_sdiv(f32_2t *dst, f32_t src);
 
 f32_t f32_2t_dot(const f32_2t *src1, const f32_2t *src2);
 
+
 // FUNCTIONS FOR OPERATING 2D FIGURES
 
 figure32_2t* figure32_2t_copy(const figure32_2t* src);
+
+
+// FUNCTIONS FOR GENERATING 2D FIGURES
+
+figure32_2t *figure32_2t_circle(f32_t radius, const f32_2t *center, const color *obj_color, uint32_t vertex_num);

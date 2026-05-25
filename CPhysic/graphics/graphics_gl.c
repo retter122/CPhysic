@@ -141,6 +141,8 @@ draw_gl *draw_gl_init_scene32_2t(const scene32_2t *scene) {
         total_faces += scene->objects[i].figure->faces_num;
     }
 
+    printf("%d\n", total_vertex);
+
     glGenBuffers(1, &out->vertex_buf);
     glGenBuffers(1, &out->color_buf);
     glGenBuffers(1, &out->index_buf);
@@ -154,10 +156,10 @@ draw_gl *draw_gl_init_scene32_2t(const scene32_2t *scene) {
 
     uint32_t pos_write = 0;
     for (uint32_t i = 0; i < scene->objects_num; ++i) {
-        pobj32_2t *obj = scene->objects + i;
-        glBufferSubData(GL_ARRAY_BUFFER, pos_write * sizeof(f32_2t), sizeof(f32_2t) * obj->figure->vertex_num, obj->figure->vertex);
+        figure32_2t *figure = scene->objects[i].figure;
+        glBufferSubData(GL_ARRAY_BUFFER, pos_write * sizeof(f32_2t), sizeof(f32_2t) * figure->vertex_num, figure->vertex);
     
-        pos_write += obj->figure->vertex_num;
+        pos_write += figure->vertex_num;
     }  
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(f32_2t), 0);
@@ -168,10 +170,10 @@ draw_gl *draw_gl_init_scene32_2t(const scene32_2t *scene) {
     
     pos_write = 0;
     for (uint32_t i = 0; i < scene->objects_num; ++i) {
-        pobj32_2t *obj = scene->objects + i;
-        glBufferSubData(GL_ARRAY_BUFFER, pos_write * sizeof(color), sizeof(color) * obj->figure->vertex_num, obj->figure->colors);
+        figure32_2t *figure = scene->objects[i].figure;
+        glBufferSubData(GL_ARRAY_BUFFER, pos_write * sizeof(color), sizeof(color) * figure->vertex_num, figure->colors);
 
-        pos_write += obj->figure->vertex_num;
+        pos_write += figure->vertex_num;
     } 
 
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(color), 0);
@@ -181,10 +183,10 @@ draw_gl *draw_gl_init_scene32_2t(const scene32_2t *scene) {
 
     pos_write = 0;
     for (uint32_t i = 0; i < scene->objects_num; ++i) {
-        pobj32_2t *obj = scene->objects + i;
-        glBufferSubData(GL_ARRAY_BUFFER, pos_write * sizeof(face), sizeof(face) * obj->figure->faces_num, obj->figure->faces);
+        figure32_2t *figure = scene->objects[i].figure;
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, pos_write * sizeof(face), sizeof(face) * figure->faces_num, figure->faces);
 
-        pos_write += obj->figure->faces_num;
+        pos_write += figure->faces_num;
     }
 
     out->points = total_faces * 3;
@@ -217,7 +219,7 @@ void draw_gl_update_scene32_2t(draw_gl *dst, const scene32_2t *scene) {
     for (uint32_t i = 0; i < scene->objects_num; ++i) {
         figure32_2t *figure = scene->objects[i].figure;
 
-        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, pos_write * sizeof(face), figure->faces_num * sizeof(color), figure->faces);
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, pos_write * sizeof(face), figure->faces_num * sizeof(face), figure->faces);
         pos_write += figure->faces_num;
     }
 }

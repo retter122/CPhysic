@@ -3,7 +3,7 @@
 #include <math.h>
 
 #include "./physic2D.h"
-
+#include "./physic_constants.h"
 
 // 2D SCENE PROCEDURES
 
@@ -14,16 +14,27 @@ scene32_2t* scene32_2t_create() {
     return out;
 }
 
-
 void scene32_2t_new_obj(scene32_2t* scene, const figure32_2t* figure, f32_t mass, f32_t hardness, f32_t damping) {
     scene->objects = realloc(scene->objects, (scene->objects_num + 1) * sizeof(pobj32_2t));
 
+    uint32_t total_vertex = 0;
+    for (uint32_t i = 0; i < scene->objects_num; ++i) total_vertex += scene->objects[i].figure->vertex_num;
+
     scene->objects[scene->objects_num].mass = mass, scene->objects[scene->objects_num].hardness = hardness;
     scene->objects[scene->objects_num].damping = damping;
-    scene->objects[scene->objects_num].figure = figure32_2t_copy(figure);
+
+    figure32_2t *copied_figure = figure32_2t_copy(figure);
+
+    scene->objects[scene->objects_num].figure = copied_figure;
 
     pobj32_2t_generate_edges(scene->objects + scene->objects_num);
     pobj32_2t_init_mass_coofs(scene->objects + scene->objects_num);
+
+    for (uint32_t i = 0; i < copied_figure->faces_num; ++i) {
+        copied_figure->faces[i].a += total_vertex;
+        copied_figure->faces[i].b += total_vertex;
+        copied_figure->faces[i].c += total_vertex;
+    }
 
     scene->objects[scene->objects_num].vertex_spd = malloc(figure->vertex_num * sizeof(f32_2t));
     for (uint32_t i = 0; i < figure->vertex_num; ++i) {
@@ -33,12 +44,10 @@ void scene32_2t_new_obj(scene32_2t* scene, const figure32_2t* figure, f32_t mass
     ++scene->objects_num;
 }
 
-
 void scene32_2t_add_force(scene32_2t* scene, force32_2t force) {
     scene->forces = realloc(scene->forces, scene->forces_num * sizeof(force32_2t));
     scene->forces[scene->forces_num++] = force;
 }
-
 
 void scene32_2t_update(scene32_2t* scene, f32_t time) {
     for (uint32_t i = 0; i < scene->forces_num; ++i) scene->forces[i](scene, time);
@@ -64,7 +73,6 @@ pobj32_2t* pobj32_2t_create(const figure32_2t *figure, f32_t mass, f32_t hardnes
     return out;
 }
 
-
 void pobj32_2t_add_pulse(pobj32_2t* obj, const f32_2t* pulse) {
     for (uint32_t i = 0; i < obj->figure->vertex_num; ++i) f32_2t_smad(&obj->vertex_spd[i], pulse, 1.f / obj->mass);
 }
@@ -83,8 +91,8 @@ void pobj32_2t_update(pobj32_2t* obj, f32_t time) {
         f32_t len = sqrtf(f32_2t_dot(&force, &force));
         f32_2t_smul(&force, (len - now_edge->len) / len * obj->hardness);
 
-        f32_2t_smad(&obj->vertex_spd[now_edge->a], &force, time / (obj->vertex_mass_coof[now_edge->a] / obj->mass));
-        f32_2t_smad(&obj->vertex_spd[now_edge->b], &force, -time / (obj->vertex_mass_coof[now_edge->b] / obj->mass));
+        f32_2t_smad(&obj->vertex_spd[now_edge->a], &force, time / (obj->vertex_mass_coof[now_edge->a] * obj->mass));
+        f32_2t_smad(&obj->vertex_spd[now_edge->b], &force, -time / (obj->vertex_mass_coof[now_edge->b] * obj->mass));
     }
 
     for (uint32_t i = 0; i < obj->figure->vertex_num; ++i) f32_2t_smad(&obj->figure->vertex[i], &obj->vertex_spd[i], time);
@@ -152,5 +160,34 @@ void pobj32_2t_init_mass_coofs(pobj32_2t* object) {
 
     for (uint32_t i = 0; i < object->figure->vertex_num; ++i) {
         object->vertex_mass_coof[i] /= total_len;
+    }
+}
+
+
+// BASIC FORCES
+
+void forces32_2t_gravity(scene32_2t *scene, f32_t time) {
+    for (uint32_t i = 0; i < scene->objects_num; ++i) {
+        pobj32_2t *obj_a = &scene->objects[i];
+
+        for (uint32_t j = 0; j < scene->objects_num; ++j) {
+            pobj32_2t *obj_b = &scene->objects[j];
+
+            for (uint32_t i_v = 0; i_v < obj_a->figure->vertex_num; ++i_v) {
+                for (uint32_t j_v = 0; j_v < obj_b->figure->vertex_num; ++j_v) {
+                    if (i == j && i_v == j_v) continue;
+
+                    f32_2t force = { obj_b->figure->vertex[j_v].x, obj_b->figure->vertex[j_v].y };
+                    f32_2t_sub(&force, &obj_a->figure->vertex[i_v]);
+
+                    f32_t len = sqrtf(f32_2t_dot(&force, &force));
+                    f32_2t_sdiv(&force, len);
+                    f32_2t_smul(&force, (obj_a->vertex_mass_coof[i_v] * obj_a->mass * obj_b->vertex_mass_coof[j_v] * obj_b->mass) / (len * len) * G_32);
+
+                    f32_2t_smad(&obj_a->vertex_spd[i_v], &force, time / (obj_a->vertex_mass_coof[i_v] * obj_a->mass));
+                    f32_2t_smad(&obj_b->vertex_spd[j_v], &force, -time / (obj_b->vertex_mass_coof[j_v] * obj_b->mass));
+                }
+            }
+        }
     }
 }
